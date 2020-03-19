@@ -657,11 +657,7 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../resources/base/base.qrc">
-           <normaloff>:/base/start.png</normaloff>:/base/start.png</iconset>
+          <string>Connect</string>
          </property>
          <property name="iconSize">
           <size>
