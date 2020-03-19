@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="base">
+    <file>backend.png</file>
+    <file>excel.png</file>
+    <file>grid.png</file>
+    <file>star.png</file>
+    <file>start.png</file>
+  </qresource>
+</RCC>

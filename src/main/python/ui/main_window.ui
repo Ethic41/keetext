@@ -356,8 +356,8 @@
            <enum>Unchecked</enum>
           </property>
           <property name="icon">
-           <iconset resource="../../resources/base/keetext_base.qrc">
-            <normaloff>:/base_images/excel.png</normaloff>:/base_images/excel.png</iconset>
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/excel.png</normaloff>:/base/excel.png</iconset>
           </property>
          </item>
         </widget>
@@ -472,8 +472,8 @@
            <enum>Unchecked</enum>
           </property>
           <property name="icon">
-           <iconset resource="../../resources/base/keetext_base.qrc">
-            <normaloff>:/base_images/grid.png</normaloff>:/base_images/grid.png</iconset>
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/grid.png</normaloff>:/base/grid.png</iconset>
           </property>
          </item>
          <item>
@@ -484,8 +484,8 @@
            <enum>Unchecked</enum>
           </property>
           <property name="icon">
-           <iconset resource="../../resources/base/keetext_base.qrc">
-            <normaloff>:/base_images/grid.png</normaloff>:/base_images/grid.png</iconset>
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/grid.png</normaloff>:/base/grid.png</iconset>
           </property>
          </item>
          <item>
@@ -496,8 +496,8 @@
            <enum>Unchecked</enum>
           </property>
           <property name="icon">
-           <iconset resource="../../resources/base/keetext_base.qrc">
-            <normaloff>:/base_images/grid.png</normaloff>:/base_images/grid.png</iconset>
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/grid.png</normaloff>:/base/grid.png</iconset>
           </property>
          </item>
          <item>
@@ -508,8 +508,8 @@
            <enum>Unchecked</enum>
           </property>
           <property name="icon">
-           <iconset resource="../../resources/base/keetext_base.qrc">
-            <normaloff>:/base_images/grid.png</normaloff>:/base_images/grid.png</iconset>
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/grid.png</normaloff>:/base/grid.png</iconset>
           </property>
          </item>
          <item>
@@ -520,8 +520,8 @@
            <enum>Unchecked</enum>
           </property>
           <property name="icon">
-           <iconset resource="../../resources/base/keetext_base.qrc">
-            <normaloff>:/base_images/grid.png</normaloff>:/base_images/grid.png</iconset>
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/grid.png</normaloff>:/base/grid.png</iconset>
           </property>
          </item>
         </widget>
@@ -580,8 +580,8 @@
            <enum>Unchecked</enum>
           </property>
           <property name="icon">
-           <iconset resource="../../resources/base/keetext_base.qrc">
-            <normaloff>:/base_images/backend.png</normaloff>:/base_images/backend.png</iconset>
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/backend.png</normaloff>:/base/backend.png</iconset>
           </property>
          </item>
          <item>
@@ -592,8 +592,8 @@
            <enum>Unchecked</enum>
           </property>
           <property name="icon">
-           <iconset resource="../../resources/base/keetext_base.qrc">
-            <normaloff>:/base_images/backend.png</normaloff>:/base_images/backend.png</iconset>
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/backend.png</normaloff>:/base/backend.png</iconset>
           </property>
          </item>
          <item>
@@ -604,8 +604,8 @@
            <enum>Unchecked</enum>
           </property>
           <property name="icon">
-           <iconset resource="../../resources/base/keetext_base.qrc">
-            <normaloff>:/base_images/backend.png</normaloff>:/base_images/backend.png</iconset>
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/backend.png</normaloff>:/base/backend.png</iconset>
           </property>
          </item>
         </widget>
@@ -660,8 +660,8 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../resources/base/keetext_base.qrc">
-           <normaloff>:/base_images/start.png</normaloff>:/base_images/start.png</iconset>
+          <iconset resource="../../resources/base/base.qrc">
+           <normaloff>:/base/start.png</normaloff>:/base/start.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -759,7 +759,7 @@
   </action>
  </widget>
  <resources>
-  <include location="../../resources/base/keetext_base.qrc"/>
+  <include location="../../resources/base/base.qrc"/>
  </resources>
  <connections/>
 </ui>
