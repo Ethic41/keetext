@@ -2,3 +2,6 @@
 *.idea
 rough
 __pycache__
+*.venv
+*.vscode
+target

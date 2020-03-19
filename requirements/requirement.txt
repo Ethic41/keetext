@@ -1,2 +1,7 @@
-PyQt5 == 5.14.1
-fbs == 0.8.6
+PyQt5==5.9.2
+PyInstaller==3.4
+bs4
+lxml
+requests
+openpyxl
+fbs

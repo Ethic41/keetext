@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1072</width>
+    <height>846</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Keetext</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_6">
+    <item row="5" column="2">
+     <widget class="QGroupBox" name="outputFormatGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>422</width>
+        <height>64</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Output Format</string>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_9">
+       <item row="0" column="0">
+        <widget class="QComboBox" name="outputComboBox">
+         <property name="editable">
+          <bool>false</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>All in One File</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Based on Category</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Based on Subcategory</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QGroupBox" name="starRatingGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>422</width>
+        <height>91</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Select Star Rating</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="1" column="0" rowspan="2">
+        <widget class="QRadioButton" name="fiveStarRadioButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Five Stars</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="twoStarRadioButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Two Stars</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="oneStarRadioButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>One Star</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QRadioButton" name="fourStarRadioButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Four Stars</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QRadioButton" name="threeStarRadioButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Three Stars</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QGroupBox" name="productRankGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>422</width>
+        <height>89</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Product Rank</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0">
+        <widget class="QLabel" name="minimumRankLabel">
+         <property name="text">
+          <string>Minimum</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QSpinBox" name="minimumRankSpinBox">
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>1000000000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="maximumRankSpinBox">
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>1000000000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="maximumRankLabel">
+         <property name="text">
+          <string>Maximum</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QGroupBox" name="productSubrankGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>422</width>
+        <height>89</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Product Sub-rank</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_8">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Minimum</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QSpinBox" name="spinBox_3">
+         <property name="maximum">
+          <number>1000000000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Maximum</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QSpinBox" name="spinBox_4">
+         <property name="maximum">
+          <number>1000000000</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QGroupBox" name="productStatusGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>422</width>
+        <height>62</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Product Status</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="radioButton_7">
+         <property name="text">
+          <string>Not Available Product</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="radioButton_6">
+         <property name="text">
+          <string>All Available Product</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QGroupBox" name="outputGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>422</width>
+        <height>295</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Output Directory</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_10">
+       <item row="1" column="0" colspan="2">
+        <widget class="QListWidget" name="outputDListWidget">
+         <property name="minimumSize">
+          <size>
+           <width>391</width>
+           <height>220</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>Sample Output File 1</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/keetext_base.qrc">
+            <normaloff>:/base_images/excel.png</normaloff>:/base_images/excel.png</iconset>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="outputLineEdit">
+         <property name="minimumSize">
+          <size>
+           <width>281</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="outputBrowseButton">
+         <property name="minimumSize">
+          <size>
+           <width>91</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="0" rowspan="7">
+     <widget class="QGroupBox" name="selectProjectGroupBox">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>310</width>
+        <height>806</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string/>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="topCategoriesCheckBox">
+         <property name="text">
+          <string>Top Categories</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QListWidget" name="selectCategoryListWidget">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Select the Categories of Interest</string>
+         </property>
+         <property name="whatsThis">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>Sample Category 1</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/keetext_base.qrc">
+            <normaloff>:/base_images/grid.png</normaloff>:/base_images/grid.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sample Category 2</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/keetext_base.qrc">
+            <normaloff>:/base_images/grid.png</normaloff>:/base_images/grid.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sample Category 3</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/keetext_base.qrc">
+            <normaloff>:/base_images/grid.png</normaloff>:/base_images/grid.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sample Category 4</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/keetext_base.qrc">
+            <normaloff>:/base_images/grid.png</normaloff>:/base_images/grid.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sample Category 5</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/keetext_base.qrc">
+            <normaloff>:/base_images/grid.png</normaloff>:/base_images/grid.png</iconset>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="1" rowspan="6">
+     <widget class="QGroupBox" name="selectTableGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>310</width>
+        <height>720</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="selectSubcategoryCheckBox">
+         <property name="text">
+          <string>Select Subcategory</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QListWidget" name="selectSubcategoryListWidget">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>Sample Subcategory 1</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/keetext_base.qrc">
+            <normaloff>:/base_images/backend.png</normaloff>:/base_images/backend.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sample Subcategory 2</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/keetext_base.qrc">
+            <normaloff>:/base_images/backend.png</normaloff>:/base_images/backend.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sample Subcategory 3</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/keetext_base.qrc">
+            <normaloff>:/base_images/backend.png</normaloff>:/base_images/backend.png</iconset>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="2">
+     <widget class="QGroupBox" name="openProjectGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>738</width>
+        <height>80</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Choose Amazon Domain</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="1">
+        <widget class="QPushButton" name="connectButton">
+         <property name="minimumSize">
+          <size>
+           <width>91</width>
+           <height>41</height>
+          </size>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../resources/base/keetext_base.qrc">
+           <normaloff>:/base_images/start.png</normaloff>:/base_images/start.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QComboBox" name="urlComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>441</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>the feature for changing various Amazon Domains is Coming Soon!</string>
+         </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+         </property>
+         <item>
+          <property name="text">
+           <string>https://www.amazon.de</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>https://www.amazon.com</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="sizeGripEnabled">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <action name="action_Open">
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionAbout_Textract">
+   <property name="text">
+    <string>About Textract</string>
+   </property>
+  </action>
+  <action name="action_About_Textract">
+   <property name="text">
+    <string>&amp;About Textract</string>
+   </property>
+  </action>
+  <action name="action_About_Author">
+   <property name="text">
+    <string>&amp;About Author</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../resources/base/keetext_base.qrc"/>
+ </resources>
+ <connections/>
+</ui>

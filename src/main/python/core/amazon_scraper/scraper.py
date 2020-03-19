@@ -29,12 +29,12 @@ class Scraper:
             subcat_grp_attributes[categories_id_name] = category_id
             subcat_grp = categories_soup.find(subcat_grp_tag, subcat_grp_attributes)
             for subcat_item in subcat_grp.find_all(subcat_tag_name, subcat_attributes):
-                subcat_url = subcat_item.a["href"]
-                subcat_name = str(subcat_item.a.div.string).strip()
+                subcat_url = subcat_item["href"]
+                subcat_name = str(subcat_item.div.string).strip()
                 subcategories[category_id] = {subcat_url: subcat_name}
         return subcategories
 
     def make_categories_soup(self):
-        categories_request = self.requester.make_request(get_categories_url, payload=get_categories_payload)
-        return bs(categories_request.content, "lxml")  # return a soup object for categories
+        categories_request = self.requester.make_request(base_url + get_categories_url, payload=get_categories_payload)
+        return bs(categories_request, "lxml")  # return a soup object for categories
 

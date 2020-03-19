@@ -7,7 +7,9 @@ import re
 
 # TODO: implemet the get_base_url from GUI
 base_url = r"https://www.amazon.de"
+# base_url = r"http://localhost:8080"
 get_categories_url = r"/gp/navigation/ajax/generic.html"
+#get_categories_url = r"/clean.html"
 get_categories_payload = {"ajaxTemplate":"hamburger", "hmDataAjaxHint":"1"}
 categories_tag_name = "a"
 categories_attributes = {"class":"hmenu-item", "data-menu-id":re.compile(r"\d+"), "href":""}
