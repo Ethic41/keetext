@@ -10,7 +10,7 @@ from PyQt5.QtGui import *
 import os
 
 
-class KeetextGui(QMainWindow, Ui_MainWindow):
+class KeetextGui(Ui_MainWindow, QMainWindow):
     def __init__(self):
         super(KeetextGui, self).__init__()
         self.setupUi(self)
