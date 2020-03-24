@@ -25,6 +25,7 @@ one_star_attributes = {"class":"a-star-medium-1"}
 two_star_attributes = {"class":"a-star-medium-2"}
 three_star_attributes = {"class":"a-star-medium-3"}
 four_star_attributes = {"class":"a-star-medium-4"}
+ratings = {1: one_star_attributes, 2: two_star_attributes, 3: three_star_attributes, 4: four_star_attributes}
 
 # not available section retrieval constants
 not_avail_section_tag = "ul"
@@ -39,17 +40,19 @@ next_page_attributes = {"class":"a-last"}
 # item section retrieval constants
 # Usu_p you are right...we really don't forget this stuff...it's all there....in our Big heads
 
-not_available_string = "Derzeit nicht auf Lager."
+not_available_string = re.compile(r"Derzeit nicht auf Lager\.|Derzeit nicht|Derzeit nicht verfügbar\.|Currently not on stock\.|Currently unavailable\.|Momentan nicht verfügbar\.|unavailable")
 uuid_pattern = re.compile(r"[a-z0-9\-]{36}")
 asin_pattern = re.compile(r"[A-Z0-9]{10}")
 index_pattern = re.compile(r"\d+")
 item_section_tag = "div"
 item_section_attributes = {"data-asin":asin_pattern, "data-uuid":uuid_pattern, "data-index":index_pattern}
-item_tag = "td"
-item_label_attributes = {"class":"label"}
-item_value_attributes = {"class":"value"}
-rank_pattern = re.compile(r"Nr. \d+")
-num_pattern = re.compile(r"\d+")
+product_url_tag = "a"
+product_url_attributes = {"class": "a-link-normal"}
+product_tag = "td"
+product_label_attributes = {"class":"label"}
+product_value_attributes = {"class":"value"}
+rank_pattern = re.compile(r"Nr\. \d+")
+num_pattern = re.compile(r"\d{1,}\.{0,}\d{0,}")
 
 # class strings
 invalid = "invalid"
