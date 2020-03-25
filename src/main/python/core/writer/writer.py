@@ -28,7 +28,6 @@ class Writer:
         self.current_worksheet = self.workbook.add_worksheet(name=name)
     
     def add_data(self, row, column, data):
-        print("appending!!")
         self.current_worksheet.write_row(row, column, [data])
     
     def close_workbook(self):
@@ -66,7 +65,6 @@ class Writer:
             try:
                 self.current_data_fields.index(field)
             except Exception:
-                print("appending!!!")
                 self.current_data_fields.append(field)
                 index = self.current_data_fields.index(field)
                 self.add_data(0, index, field)
@@ -85,7 +83,6 @@ class Writer:
     def get_indices(self, fields_list: list):
         indices = []
         for field in fields_list:
-            print("appending!")
             indices.append(self.current_data_fields.index(field))
         return indices
 
