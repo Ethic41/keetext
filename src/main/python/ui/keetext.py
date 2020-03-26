@@ -5,11 +5,12 @@
 
 from core.amazon_scraper.scraper import Scraper
 from ui.main_window import Ui_MainWindow
+import ui.base_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
 from core.amazon_scraper.structures import ListWidgetItem, Category
-# from PyQt5.QtWidgets import *
-# from PyQt5.QtCore import *
-# from PyQt5.QtGui import *
+import threading
+from threading import Thread
+from time import sleep
 import os
 
 
@@ -50,7 +51,7 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         self.excel_icon.addPixmap(QtGui.QPixmap(":/base/excel.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 
         # connect button clicked
-        self.connectButton.clicked.connect(self.start_scraping)
+        self.connectButton.clicked.connect(self.start)
 
         self.selectCategoryListWidget.clicked.connect(self.display_subcategories)
 
@@ -95,6 +96,8 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
 
         self.outputDirectoryLineEdit.textChanged.connect(self.show_output_dir_files)
         self.outputDirectoryListWidget.clicked.connect(self.show_output_dir_files)
+        status_thread = Thread(target=self.status_tracking)
+        status_thread.start()
     
     def show_output_dir_files(self):
         try:
@@ -103,8 +106,9 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
 
             # Get the user specified directory and extract the files
             output_dir = self.outputDirectoryLineEdit.text()
-            self.output_dir = output_dir
-            dir_items = os.listdir(output_dir)
+            if output_dir:
+                self.output_dir = output_dir
+            dir_items = os.listdir(self.output_dir)
             for item in dir_items:
                 full_path = fr"{output_dir}/{item}"
                 if os.path.isfile(full_path):
@@ -235,15 +239,45 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
             print(e)
     
     def start_scraping(self):
+        main_thread = threading.main_thread()
         min_rank = self.minimumRankSpinBox.value()
         max_rank = self.maximumRankSpinBox.value()
         min_subrank = self.minimumSubrankSpinBox.value()
         max_subrank = self.maximumSubrankSpinBox.value()
-
+        self.scraper.started = True
+        self.scraper.stopped = False
         self.scraper.filter_by_rating(self.selected_rating)
         self.scraper.filter_by_include_not_available()
         self.scraper.retrieve_not_available_item(self.output_format, self.output_dir, min_rank=min_rank, max_rank=max_rank, min_subrank=min_subrank, max_subrank=max_subrank)
+        if not main_thread.is_alive():
+            exit(0)
+        
+        if self.scraper.stopped == True:
+            exit(0)
+            
         self.show_output_dir_files()
+    
+    def stop_scraping(self):
+        self.scraper.started = False
+        self.scraper.stopped = True
+        self.scraper.scrape_status = self.scraper.stopping_status
+    
+    def start(self):
+        if self.connectButton.text() == "Start":
+            self.connectButton.setText("Stop")
+            scraper_thread = Thread(target=self.start_scraping)
+            scraper_thread.start()
+            
+        elif self.connectButton.text() == "Stop":
+            self.connectButton.setText("Start")
+            self.stop_scraping()
+    
+    def status_tracking(self):
+        main_thread = threading.main_thread()
+        while main_thread.is_alive():
+            self.programStatus.setText(self.scraper.scrape_status)
+            sleep(1)
+        exit(0)
 
     def change_base_url(self):
         self.scraper.base_url = self.urlComboBox.currentText()

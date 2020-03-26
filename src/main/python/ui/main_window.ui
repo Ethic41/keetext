@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1072</width>
-    <height>846</height>
+    <height>865</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -66,8 +66,8 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QGroupBox" name="starRatingGroupBox">
+    <item row="0" column="1" colspan="2">
+     <widget class="QGroupBox" name="chooseDomainGroupBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>
@@ -76,8 +76,14 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>422</width>
-        <height>50</height>
+        <width>738</width>
+        <height>80</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
        </size>
       </property>
       <property name="font">
@@ -86,58 +92,70 @@
        </font>
       </property>
       <property name="title">
-       <string>Select Star Rating</string>
+       <string>Choose Amazon Domain</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="oneStarRadioButton">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>One Star</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="4">
-        <widget class="QRadioButton" name="fourStarRadioButton">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Four Stars</string>
-         </property>
-        </widget>
-       </item>
+      <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="1">
-        <widget class="QRadioButton" name="twoStarRadioButton">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
+        <widget class="QPushButton" name="connectButton">
+         <property name="minimumSize">
+          <size>
+           <width>91</width>
+           <height>41</height>
+          </size>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
          </property>
          <property name="text">
-          <string>Two Stars</string>
+          <string>Start</string>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
-        <widget class="QRadioButton" name="threeStarRadioButton">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
+       <item row="0" column="0">
+        <widget class="QComboBox" name="urlComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="text">
-          <string>Three Stars</string>
+         <property name="minimumSize">
+          <size>
+           <width>441</width>
+           <height>40</height>
+          </size>
          </property>
-         <property name="checked">
+         <property name="toolTip">
+          <string>the feature for changing various Amazon Domains is Coming Soon!</string>
+         </property>
+         <property name="editable">
           <bool>true</bool>
          </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+         </property>
+         <item>
+          <property name="text">
+           <string>https://www.amazon.de</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>https://www.amazon.com</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
@@ -257,8 +275,92 @@
       </layout>
      </widget>
     </item>
-    <item row="2" column="2">
-     <widget class="QGroupBox" name="productStatusGroupBox">
+    <item row="1" column="1" rowspan="6">
+     <widget class="QGroupBox" name="selectSubcategoryGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>310</width>
+        <height>700</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="selectAllSubcategoryCheckBox">
+         <property name="text">
+          <string>Select Subcategory</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QListWidget" name="selectSubcategoryListWidget">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>Sample Subcategory 1</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/backend.png</normaloff>:/base/backend.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sample Subcategory 2</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/backend.png</normaloff>:/base/backend.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sample Subcategory 3</string>
+          </property>
+          <property name="checkState">
+           <enum>Unchecked</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/base/base.qrc">
+            <normaloff>:/base/backend.png</normaloff>:/base/backend.png</iconset>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QGroupBox" name="starRatingGroupBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>
@@ -277,23 +379,57 @@
        </font>
       </property>
       <property name="title">
-       <string>Product Status</string>
+       <string>Select Star Rating</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="1">
-        <widget class="QRadioButton" name="notAvailableProductRadioButton">
-         <property name="text">
-          <string>Not Available Product</string>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="oneStarRadioButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
          </property>
-         <property name="checked">
-          <bool>true</bool>
+         <property name="text">
+          <string>One Star</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="availableProductRadioButton">
+       <item row="0" column="4">
+        <widget class="QRadioButton" name="fourStarRadioButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
-          <string>All Available Product</string>
+          <string>Four Stars</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="twoStarRadioButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Two Stars</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QRadioButton" name="threeStarRadioButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Three Stars</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -385,6 +521,76 @@
       </layout>
      </widget>
     </item>
+    <item row="2" column="2">
+     <widget class="QGroupBox" name="productStatusGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>422</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Product Status</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="notAvailableProductRadioButton">
+         <property name="text">
+          <string>Not Available Product</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="availableProductRadioButton">
+         <property name="text">
+          <string>All Available Product</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="7" column="0" colspan="3">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="programStatus">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Ready</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
     <item row="0" column="0" rowspan="7">
      <widget class="QGroupBox" name="selectCategoryGroupBox">
       <property name="enabled">
@@ -399,7 +605,7 @@
       <property name="minimumSize">
        <size>
         <width>310</width>
-        <height>806</height>
+        <height>750</height>
        </size>
       </property>
       <property name="font">
@@ -427,6 +633,13 @@
          </property>
          <property name="checked">
           <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="categoryRefreshButton">
+         <property name="text">
+          <string>Refresh</string>
          </property>
         </widget>
        </item>
@@ -519,192 +732,6 @@
           <property name="icon">
            <iconset resource="../../resources/base/base.qrc">
             <normaloff>:/base/grid.png</normaloff>:/base/grid.png</iconset>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="categoryRefreshButton">
-         <property name="text">
-          <string>Refresh</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="1" rowspan="6">
-     <widget class="QGroupBox" name="selectSubcategoryGroupBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>310</width>
-        <height>720</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="selectAllSubcategoryCheckBox">
-         <property name="text">
-          <string>Select Subcategory</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QListWidget" name="selectSubcategoryListWidget">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <item>
-          <property name="text">
-           <string>Sample Subcategory 1</string>
-          </property>
-          <property name="checkState">
-           <enum>Unchecked</enum>
-          </property>
-          <property name="icon">
-           <iconset resource="../../resources/base/base.qrc">
-            <normaloff>:/base/backend.png</normaloff>:/base/backend.png</iconset>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Sample Subcategory 2</string>
-          </property>
-          <property name="checkState">
-           <enum>Unchecked</enum>
-          </property>
-          <property name="icon">
-           <iconset resource="../../resources/base/base.qrc">
-            <normaloff>:/base/backend.png</normaloff>:/base/backend.png</iconset>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Sample Subcategory 3</string>
-          </property>
-          <property name="checkState">
-           <enum>Unchecked</enum>
-          </property>
-          <property name="icon">
-           <iconset resource="../../resources/base/base.qrc">
-            <normaloff>:/base/backend.png</normaloff>:/base/backend.png</iconset>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="1" colspan="2">
-     <widget class="QGroupBox" name="chooseDomainGroupBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>738</width>
-        <height>80</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="title">
-       <string>Choose Amazon Domain</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="1">
-        <widget class="QPushButton" name="connectButton">
-         <property name="minimumSize">
-          <size>
-           <width>91</width>
-           <height>41</height>
-          </size>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Connect</string>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QComboBox" name="urlComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>441</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>the feature for changing various Amazon Domains is Coming Soon!</string>
-         </property>
-         <property name="editable">
-          <bool>true</bool>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
-         </property>
-         <item>
-          <property name="text">
-           <string>https://www.amazon.de</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>https://www.amazon.com</string>
           </property>
          </item>
         </widget>

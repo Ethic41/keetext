@@ -22,6 +22,16 @@ class Scraper:
         self.subcategories: SubCategoryList = []  # appropriately to save memory
         self.retrieved_products: ProductList = []  # this will contain retrieved items_data, size not > 10
         self.retrieved_products_count: int = 0
+        self.total_retrieved_product_count: int = 0
+        self.started = False
+        self.stopped = False
+        self.ready_status = "Ready..."
+        self.stopped_status = "Scraping Stopped!"
+        self.stopping_status = "Stopping..."
+        self.scraping_status = "Scraping Started..."
+        self.completed_subcategory = "Moving to next Subcategory..."
+        self.completed_status = "Scraping Completed Successfully..."
+        self.scrape_status = self.ready_status
     
     def set_categories(self, categories_soup)->CategoryList:
         self.categories: CategoryList = []
@@ -56,6 +66,7 @@ class Scraper:
         return bs(content, const.parser)
     
     def filter_by_rating(self, rating: int):
+        self.scrape_status = f"filtering {rating}-Star Rated Products..."
         for subcategory in self.subcategories:
             try:
                 if (subcategory.selected) and (subcategory.validity == const.valid):
@@ -71,6 +82,7 @@ class Scraper:
                 continue
     
     def filter_by_include_not_available(self):
+        self.scrape_status = "filtering not available Products..."
         for subcategory in self.subcategories:
             try:
                 if (subcategory.selected) and (subcategory.validity == const.valid):
@@ -86,11 +98,14 @@ class Scraper:
     
     def retrieve_not_available_item(self, output_file_format, output_dir, min_rank=None, max_rank=None, min_subrank=None, max_subrank=None):
         self.writer.create_file(output_file_format, output_dir)   # create the excel file in memory
+        self.scrape_status = self.scraping_status
         for subcategory in self.subcategories:
             try:
                 if (subcategory.selected) and (subcategory.validity == const.valid):
                     # confirming item is selected and valid
                     while(subcategory.valid_url):
+                        if (self.started == False) and (self.stopped == True):
+                            self.stop()
                         soup = self.make_soup(self.base_url + subcategory.valid_url)
                         if soup.find(string=const.not_available_string):   # the page contain not available product
                             # for each product in the page, we are trying to find matching product
@@ -116,20 +131,24 @@ class Scraper:
                                         new_product.product_data = product_information
                                         self.retrieved_products.append(new_product)
                                         self.retrieved_products_count += 1
+                                        self.total_retrieved_product_count += 1
+                                        self.show_product_count()
                                     
                                     elif product_information:
                                         product_information["category"] = subcategory.category_name
                                         product_information["subcategory"] = subcategory.name
                                         new_product.product_data = product_information
+                                        self.total_retrieved_product_count += 1
+                                        self.show_product_count()
                                         self.retrieved_products.append(new_product)
 
                                         self.writer.write(self.retrieved_products)
-
-                                        for product in self.retrieved_products:
-                                            print(product.product_data)
                                         
                                         self.retrieved_products: ProductList = []
                                         self.retrieved_products_count: int = 0
+
+                                        if (self.started == False) and (self.stopped == True):
+                                            self.stop()
 
                                         # retrieve item is upto 10 we need write data
                                 else:
@@ -138,16 +157,32 @@ class Scraper:
                             continue
                         else:   # the does not contain not available item, we retrieve next page
                             subcategory.valid_url = self.get_next_page_link(soup)
-                    
-                    self.writer.write(self.retrieved_products)
-                    self.writer.close_workbook()
-                    self.retrieved_products: ProductList = []
-                    self.retrieved_products_count: int = 0
-                    print("loop completed successfully!")        # we retrieve next subcategoryq
+
+                    self.write_and_cleanup()   #  finish writing whatever is left
+                    self.scrape_status = self.completed_subcategory    # completed scraping
+            except KeyboardInterrupt:
+                self.write_and_cleanup()
             except Exception as e:
+                self.write_and_cleanup()
                 print(e)
                 continue
+        self.scrape_status = self.completed_status
+
+    def show_product_count(self):
+        self.scrape_status = f"Retrieved {self.total_retrieved_product_count} matching Products"
     
+    def stop(self):
+        self.scrape_status = self.stopping_status
+        raise KeyboardInterrupt
+
+    def write_and_cleanup(self):
+        self.writer.write(self.retrieved_products)
+        self.writer.close_workbook()
+        self.retrieved_products: ProductList = []
+        self.retrieved_products_count: int = 0
+        self.total_retrieved_product_count: int = 0
+        self.scrape_status = self.stopped_status
+
     def extract_product_information(self, url: str)->dict:
         product_information = {}
         labels = []

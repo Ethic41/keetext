@@ -1,7 +1,7 @@
 PyQt5==5.9.2
 PyInstaller==3.4
-bs4
-lxml
-requests
-openpyxl
-fbs
+bs4==0.0.1
+lxml==4.5.0
+requests==2.23.0
+xlsxwriter==1.2.8
+fbs==0.8.6

@@ -20,9 +20,11 @@ class Writer:
         self.current_subcategory = None
         self.current_data_fields = []
         self.current_row = 1
+        self.work_book_opened = True
     
     def create_workbook(self):
         self.workbook = xl.Workbook(self.current_filename)  # write_only=True
+        self.work_book_opened = True
     
     def create_worksheet(self, name=None):
         self.current_worksheet = self.workbook.add_worksheet(name=name)
@@ -31,7 +33,8 @@ class Writer:
         self.current_worksheet.write_row(row, column, [data])
     
     def close_workbook(self):
-        self.workbook.close()
+        if self.work_book_opened:
+            self.workbook.close()
         self.workbook = None
         self.current_worksheet = None
         self.current_filename = None
@@ -40,6 +43,7 @@ class Writer:
         self.current_subcategory = None
         self.current_data_fields = []
         self.current_row = 1
+        self.work_book_opened = False
         # self.current_col = 0
 
     def create_file(self, output_file_format, output_dir):
@@ -75,10 +79,23 @@ class Writer:
         self.append_product(indices, values)
 
     def output_by_category(self, product: Product):
-        pass
+        if self.current_category != product.product_data["category"]:
+            self.current_category = product.product_data["category"]
+            self.create_worksheet(name=self.current_category)
+        
+        indices = self.get_indices(product.product_data.keys())
+        values = product.product_data.values()
+        self.append_product(indices, values)
+        
 
     def output_by_subcategory(self, product: Product):
-        pass
+        if self.current_subcategory != product.product_data["subcategory"]:
+            self.current_subcategory = product.product_data["subcategory"]
+            self.create_worksheet(name=self.current_subcategory)
+        
+        indices = self.get_indices(product.product_data.keys())
+        values = product.product_data.values()
+        self.append_product(indices, values)
 
     def get_indices(self, fields_list: list):
         indices = []
