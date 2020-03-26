@@ -3,7 +3,7 @@
 # @Date    : 2020-03-18 03:07:01
 # @Author  : Dahir Muhammad Dahir (dahirmuhammad3@gmail.com)
 
-from core.requester.reqester import Requester
+from core.requester.requester import Requester
 from bs4 import BeautifulSoup as bs
 import core.amazon_scraper.constants as const
 from core.amazon_scraper.structures import Category, CategoryList, SubCategory, SubCategoryList, ProductList, Product, SoupType, SoupTag
