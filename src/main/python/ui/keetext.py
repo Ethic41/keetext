@@ -34,12 +34,12 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
 
         self.output_format = self.all_in_one_format
 
-        # set categories and subcategories
-        self.scraper.set_categories_and_subcategories()
-        
         # set up the initial user interface
         self.setupUi(self)
 
+        # set categories and subcategories
+        self.scraper.set_categories_and_subcategories()
+        
         # set up all icons
         self.category_icon = QtGui.QIcon()
         self.category_icon.addPixmap(QtGui.QPixmap(":/base/grid.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -323,7 +323,13 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
             print(e)
 
     def refresh(self):
+        refresh_thread = Thread(target=self.refresh_categories)
+        refresh_thread.start()
+
+    
+    def refresh_categories(self):
         self.scraper.set_categories_and_subcategories()   # retrieve new categories and subcategories
         self.clear_list_widget_items(self.selectCategoryListWidget)
         self.display_categories()
         self.clear_list_widget_items(self.selectSubcategoryListWidget)
+        exit(0)

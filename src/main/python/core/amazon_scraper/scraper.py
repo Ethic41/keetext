@@ -166,7 +166,10 @@ class Scraper:
                 self.write_and_cleanup()
                 print(e)
                 continue
-        self.scrape_status = self.completed_status
+        if self.started and not self.stopped:   # this means we completed the task wthout being stopped
+            self.scrape_status = self.completed_status
+        if self.stopped and not self.started:   # this means program was stopped
+            self.scrape_status = self.stopped_status
 
     def show_product_count(self):
         self.scrape_status = f"Retrieved {self.total_retrieved_product_count} matching Products"

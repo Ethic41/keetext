@@ -58,3 +58,9 @@ num_pattern = re.compile(r"\d{1,}\.{0,}\d{0,}")
 invalid = "invalid"
 valid = "valid"
 parser = "lxml"
+
+# search section
+departments_tag = "div"
+departments_attributes = {"id": "departments"}
+department_section_tag = "li"
+department_section_attributes = {"id": re.compile(r"n/\d+")}
