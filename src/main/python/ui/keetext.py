@@ -8,8 +8,8 @@ from ui.main_window import Ui_MainWindow
 import ui.base_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
 from core.amazon_scraper.structures import ListWidgetItem, Category
-import threading
 from threading import Thread
+import threading
 from time import sleep
 import os
 
@@ -31,6 +31,12 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         self.all_in_one_format = "all"
         self.category_format = "category"
         self.subcategory_format = "subcategory"
+
+        self.workers_1 = []
+        self.workers_2 = []
+        self.workers_3 = []
+        self.workers_4 = []
+        self.finder_thread: Thread = None
 
         self.output_format = self.all_in_one_format
 
@@ -96,9 +102,13 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
 
         self.outputDirectoryLineEdit.textChanged.connect(self.show_output_dir_files)
         self.outputDirectoryListWidget.clicked.connect(self.show_output_dir_files)
+        
+        # search button clicked
+        self.searchPushButton.clicked.connect(self.start_search)
+
         status_thread = Thread(target=self.status_tracking)
         status_thread.start()
-    
+
     def show_output_dir_files(self):
         try:
             # clear any existing item b4 we populate the list
@@ -118,7 +128,6 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
                         output_file.setCheckState(QtCore.Qt.Unchecked)
                         output_file.setText(item)
                         self.outputDirectoryListWidget.addItem(output_file)
-
         except Exception as e:
             print(e)
     
@@ -226,7 +235,6 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
             elif current_subcategory_item.checkState() == QtCore.Qt.Unchecked:
                 current_item_data.selected = False
 
-
     def clear_list_widget_items(self, widget_name):
         try:
             widget = widget_name
@@ -262,6 +270,11 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         self.scraper.stopped = True
         self.scraper.scrape_status = self.scraper.stopping_status
     
+    def stop_searching(self):
+        self.scraper.started_search = False
+        self.scraper.stopped_search = True
+        self.scraper.scrape_status = self.scraper.stopping_status
+    
     def start(self):
         if self.connectButton.text() == "Start":
             self.connectButton.setText("Stop")
@@ -271,6 +284,74 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         elif self.connectButton.text() == "Stop":
             self.connectButton.setText("Start")
             self.stop_scraping()
+    
+    def start_search(self):
+        self.scraper.started_search = True
+        self.scraper.stopped_search = False
+        
+        min_rank = self.minimumRankSpinBox.value()
+        max_rank = self.maximumRankSpinBox.value()
+        min_subrank = self.minimumSubrankSpinBox.value()
+        max_subrank = self.maximumSubrankSpinBox.value()
+
+        if self.searchPushButton.text() == "Search":
+            self.searchPushButton.setText("Stop")
+
+            # start finder thread
+            self.finder_thread = Thread(target=self.scraper.search, args=(self.searchComboBox.currentText(), ))
+            self.finder_thread.start()
+            # self.scraper.search(self.searchComboBox.currentText())
+
+            
+            # start workers_1 threads rating_filters
+            workers_1_count = 1
+            self.workers_1 = []
+            for _ in range(workers_1_count):
+                worker = Thread(target=self.scraper.apply_rating_filter_to_search, args=(self.selected_rating, self.finder_thread))
+                self.workers_1.append(worker)
+            
+            for worker in self.workers_1:
+                worker.start()
+            
+            
+            # start workers_2 threads not_available_filters
+            workers_2_count = 1
+            self.workers_2 = []
+            for _ in range(workers_2_count):
+                worker = Thread(target=self.scraper.apply_include_not_available_filter_to_search, args=(self.workers_1, ))
+                self.workers_2.append(worker)
+            
+            for worker in self.workers_2:
+                worker.start()
+            
+            
+            # start worker_3 thread product url retrievers
+            workers_3_count = 1
+            self.workers_3 = []
+            for _ in range(workers_3_count):
+                worker = Thread(target=self.scraper.retrieve_product_url, args=(self.workers_2, ))
+                self.workers_3.append(worker)
+            
+            for worker in self.workers_3:
+                worker.start()
+            
+            
+            # start worker_4 thread product retrievers
+            workers_4_count = 1
+            self.workers_4 = []
+            for _ in range(workers_4_count):
+                worker = Thread(target=self.scraper.retrieve_product, args=((self.workers_3), min_rank, max_rank, min_subrank, max_subrank))
+                self.workers_4.append(worker)
+            
+            for worker in self.workers_4:
+                worker.start()
+            
+            writer_thread = Thread(target=self.scraper.write_retrieved_product, args=(self.output_format, self.output_dir, (self.workers_4)))
+            writer_thread.start() 
+            
+        elif self.searchPushButton.text() == "Stop":
+            self.searchPushButton.setText("Search")
+            self.stop_searching()
     
     def status_tracking(self):
         main_thread = threading.main_thread()
@@ -325,7 +406,6 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
     def refresh(self):
         refresh_thread = Thread(target=self.refresh_categories)
         refresh_thread.start()
-
     
     def refresh_categories(self):
         self.scraper.set_categories_and_subcategories()   # retrieve new categories and subcategories

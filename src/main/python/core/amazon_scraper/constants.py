@@ -60,7 +60,11 @@ valid = "valid"
 parser = "lxml"
 
 # search section
+search_path = "/s"
+search_param = "k"
+
 departments_tag = "div"
 departments_attributes = {"id": "departments"}
 department_section_tag = "li"
 department_section_attributes = {"id": re.compile(r"n/\d+")}
+# link = li.a["href"]

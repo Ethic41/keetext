@@ -4,7 +4,7 @@
 # @Author  : Dahir Muhammad Dahir (dahirmuhammad3@gmail.com)
 
 
-from typing import List, Dict, NewType
+from typing import List, Dict, NewType, Deque
 from bs4 import BeautifulSoup as bs
 from PyQt5 import QtWidgets
 from bs4.element import Tag
@@ -30,6 +30,11 @@ class SubCategory(Category):
     next_valid_url: str = None
     selected: bool = False
 
+class SearchSubCategory(SubCategory):
+    def __init__(self):
+        pass
+
+
 ItemData = Dict[str, str]
 
 class Product:
@@ -43,7 +48,9 @@ SoupType = NewType("SoupType", bs)
 SoupTag = NewType("SoupTag", Tag)
 ListWidgetItem = NewType("ListWidgetItem", QtWidgets.QListWidgetItem)
 ProductList = List[Product]
+UnretrievedProductList = Deque[Product]
 CategoryList = List[Category]
+SearchSubCategoryList = Deque[SearchSubCategory]
 SubCategoryList = List[SubCategory]
 
 
