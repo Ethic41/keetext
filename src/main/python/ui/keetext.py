@@ -273,7 +273,7 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
     def stop_searching(self):
         self.scraper.started_search = False
         self.scraper.stopped_search = True
-        self.scraper.scrape_status = self.scraper.stopping_status
+        self.scraper.scrape_status = self.scraper.searching_stopped_status
     
     def start(self):
         if self.connectButton.text() == "Start":
@@ -300,7 +300,6 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
             # start finder thread
             self.finder_thread = Thread(target=self.scraper.search, args=(self.searchComboBox.currentText(), ))
             self.finder_thread.start()
-            # self.scraper.search(self.searchComboBox.currentText())
 
             
             # start workers_1 threads rating_filters

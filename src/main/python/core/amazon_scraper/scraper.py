@@ -420,11 +420,9 @@ class Scraper:
                 pass
     
     def search_cleanup(self):
-        self.scrape_status = self.stopping_status
         self.retrieved_search_product_count = 0
         self.retrieved_search_product: UnretrievedProductList = deque()
         self.unretrieved_products: UnretrievedProductList = deque()
-        self.scrape_status = self.searching_stopped_status
         exit(0)
     
     def search_has_been_stopped(self):
