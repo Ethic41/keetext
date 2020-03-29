@@ -40,7 +40,7 @@ next_page_attributes = {"class":"a-last"}
 # item section retrieval constants
 # Usu_p you are right...we really don't forget this stuff...it's all there....in our Big heads
 
-not_available_string = re.compile(r"Derzeit nicht auf Lager\.|Derzeit nicht verfügbar\.|Currently not on stock\.|Currently unavailable\.|Momentan nicht verfügbar\.|unavailable")
+not_available_string = re.compile(r"Derzeit nicht auf Lager\.|Derzeit nicht verfügbar\.|Currently not on stock\.|Currently unavailable\.|Momentan nicht verfügbar\.|unavailable|Currently unavailable.|Currently not on stock.")
 uuid_pattern = re.compile(r"[a-z0-9\-]{36}")
 asin_pattern = re.compile(r"[A-Z0-9]{10}")
 index_pattern = re.compile(r"\d+")

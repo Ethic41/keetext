@@ -289,19 +289,33 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         self.scraper.started_search = True
         self.scraper.stopped_search = False
         
+
+        if self.searchPushButton.text() == "Search":
+            self.searchPushButton.setText("Stop")
+
+            # start search watch dog
+            self.watch_dog_thread = Thread(target=self.search_watch_dog)
+            self.watch_dog_thread.start()
+            
+        elif self.searchPushButton.text() == "Stop":
+            self.searchPushButton.setText("Search")
+            self.stop_searching()
+    
+    def search_watch_dog(self):
         min_rank = self.minimumRankSpinBox.value()
         max_rank = self.maximumRankSpinBox.value()
         min_subrank = self.minimumSubrankSpinBox.value()
         max_subrank = self.maximumSubrankSpinBox.value()
 
-        if self.searchPushButton.text() == "Search":
-            self.searchPushButton.setText("Stop")
+        # start finder thread
+        self.finder_thread = Thread(target=self.scraper.search, args=(self.searchComboBox.currentText(), ))
+        self.finder_thread.start()
 
-            # start finder thread
-            self.finder_thread = Thread(target=self.scraper.search, args=(self.searchComboBox.currentText(), ))
-            self.finder_thread.start()
-
-            
+        # we are waiting until all subcats have been retrieved
+        while not self.scraper.all_search_subcategories_retrieved:
+            sleep(1)
+        
+        if self.scraper.unrated_subcategories:
             # start workers_1 threads rating_filters
             workers_1_count = 1
             self.workers_1 = []
@@ -311,47 +325,61 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
             
             for worker in self.workers_1:
                 worker.start()
+        
+        # wait until we have enough work to dispatch workers two
+        while len(self.scraper.rated_subcategories) < 20:
+            sleep(2)
+        
+        # start workers_2 threads not_available_filters
+        workers_2_count = 1
+        self.workers_2 = []
+        for _ in range(workers_2_count):
+            worker = Thread(target=self.scraper.apply_include_not_available_filter_to_search, args=(self.workers_1, ))
+            self.workers_2.append(worker)
+        
+        for worker in self.workers_2:
+            worker.start()
+        
+        # wait until we have enough work to dispatch workers two
+        while len(self.scraper.fully_filtered_subcategories) < 20:
+            sleep(2)
+        
+        # start worker_3 thread product url retrievers
+        workers_3_count = 1
+        self.workers_3 = []
+        for _ in range(workers_3_count):
+            worker = Thread(target=self.scraper.retrieve_product_url, args=(self.workers_2, ))
+            self.workers_3.append(worker)
+        
+        for worker in self.workers_3:
+            worker.start()
+
+        # wait until we have enough work to dispatch workers two
+        while len(self.scraper.unretrieved_products) < 20:
+            sleep(2)
+        
+        # start worker_4 thread product retrievers
+        workers_4_count = 1
+        self.workers_4 = []
+        for _ in range(workers_4_count):
+            worker = Thread(target=self.scraper.retrieve_product, args=((self.workers_3), min_rank, max_rank, min_subrank, max_subrank))
+            self.workers_4.append(worker)
+        
+        for worker in self.workers_4:
+            worker.start()
+        
+        # wait until we have enough work to dispatch workers two
+        while len(self.scraper.retrieved_search_product) < 20:
+            sleep(2)
+        
+        writer_thread = Thread(target=self.scraper.write_retrieved_product, args=(self.output_format, self.output_dir, (self.workers_4)))
+        writer_thread.start()
+
+
+        
+
+
             
-            
-            # start workers_2 threads not_available_filters
-            workers_2_count = 1
-            self.workers_2 = []
-            for _ in range(workers_2_count):
-                worker = Thread(target=self.scraper.apply_include_not_available_filter_to_search, args=(self.workers_1, ))
-                self.workers_2.append(worker)
-            
-            for worker in self.workers_2:
-                worker.start()
-            
-            
-            # start worker_3 thread product url retrievers
-            workers_3_count = 1
-            self.workers_3 = []
-            for _ in range(workers_3_count):
-                worker = Thread(target=self.scraper.retrieve_product_url, args=(self.workers_2, ))
-                self.workers_3.append(worker)
-            
-            for worker in self.workers_3:
-                worker.start()
-            
-            
-            # start worker_4 thread product retrievers
-            workers_4_count = 1
-            self.workers_4 = []
-            for _ in range(workers_4_count):
-                worker = Thread(target=self.scraper.retrieve_product, args=((self.workers_3), min_rank, max_rank, min_subrank, max_subrank))
-                self.workers_4.append(worker)
-            
-            for worker in self.workers_4:
-                worker.start()
-            
-            writer_thread = Thread(target=self.scraper.write_retrieved_product, args=(self.output_format, self.output_dir, (self.workers_4)))
-            writer_thread.start() 
-            
-        elif self.searchPushButton.text() == "Stop":
-            self.searchPushButton.setText("Search")
-            self.stop_searching()
-    
     def status_tracking(self):
         main_thread = threading.main_thread()
         while main_thread.is_alive():
