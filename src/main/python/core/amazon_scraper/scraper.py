@@ -20,7 +20,7 @@ class Scraper:
     def __init__(self):
         self.base_url = const.base_url
         self.requester = Requester()
-        self.writer = Writer()
+        # self.writer = Writer()
         self.requester.make_request(self.base_url)
         self.categories: CategoryList = []  # take care in adding and removing items
         self.subcategories: SubCategoryList = []  # appropriately to save memory
@@ -113,6 +113,7 @@ class Scraper:
                 continue
     
     def retrieve_not_available_item(self, output_file_format, output_dir, min_rank=None, max_rank=None, min_subrank=None, max_subrank=None):
+        self.writer = Writer()
         self.writer.create_file(output_file_format, output_dir)   # create the excel file in memory
         self.scrape_status = self.scraping_status
         for subcategory in self.subcategories:
@@ -457,7 +458,9 @@ class Scraper:
         
         return True
     
-    def write_retrieved_product(self, output_file_format, output_dir, workers_4):
+    def write_retrieved_product(self, output_dir, workers_4):
+        output_file_format = "all"
+        self.writer = Writer()
         self.writer.create_file(output_file_format, output_dir)   # create the excel file in memory
 
         main_thread = threading.main_thread()

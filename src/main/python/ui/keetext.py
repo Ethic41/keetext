@@ -372,7 +372,7 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         while len(self.scraper.retrieved_search_product) < 20:
             sleep(2)
         
-        writer_thread = Thread(target=self.scraper.write_retrieved_product, args=(self.output_format, self.output_dir, (self.workers_4)))
+        writer_thread = Thread(target=self.scraper.write_retrieved_product, args=(self.output_dir, (self.workers_4)))
         writer_thread.start()
 
 

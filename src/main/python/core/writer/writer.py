@@ -110,4 +110,4 @@ class Writer:
 
     def set_file_name(self, output_file_format, output_dir):
         time_string = time.strftime(r"_%A_%d-%m-%Y-%H_%M")
-        self.current_filename = fr"{output_dir}\{output_file_format}{time_string}{self.extension}"
+        self.current_filename = fr"{output_dir}/{output_file_format}{time_string}{self.extension}"
