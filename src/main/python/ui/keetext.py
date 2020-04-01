@@ -269,11 +269,13 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         self.scraper.started = False
         self.scraper.stopped = True
         self.scraper.scrape_status = self.scraper.stopping_status
+        self.show_output_dir_files()
     
     def stop_searching(self):
         self.scraper.started_search = False
         self.scraper.stopped_search = True
         self.scraper.scrape_status = self.scraper.searching_stopped_status
+        self.show_output_dir_files()
     
     def start(self):
         if self.connectButton.text() == "Start":
@@ -300,6 +302,7 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         elif self.searchPushButton.text() == "Stop":
             self.searchPushButton.setText("Search")
             self.stop_searching()
+            self.show_output_dir_files()
     
     def search_watch_dog(self):
         min_rank = self.minimumRankSpinBox.value()
@@ -374,11 +377,6 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         
         writer_thread = Thread(target=self.scraper.write_retrieved_product, args=(self.output_dir, (self.workers_4)))
         writer_thread.start()
-
-
-        
-
-
             
     def status_tracking(self):
         main_thread = threading.main_thread()
