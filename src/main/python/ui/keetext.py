@@ -330,7 +330,7 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
                 worker.start()
         
         # wait until we have enough work to dispatch workers two
-        while len(self.scraper.rated_subcategories) < 20:
+        while len(self.scraper.rated_subcategories) < 3:
             sleep(2)
         
         # start workers_2 threads not_available_filters
@@ -344,7 +344,7 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
             worker.start()
         
         # wait until we have enough work to dispatch workers two
-        while len(self.scraper.fully_filtered_subcategories) < 20:
+        while len(self.scraper.fully_filtered_subcategories) < 3:
             sleep(2)
         
         # start worker_3 thread product url retrievers
@@ -358,7 +358,7 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
             worker.start()
 
         # wait until we have enough work to dispatch workers two
-        while len(self.scraper.unretrieved_products) < 20:
+        while len(self.scraper.unretrieved_products) < 3:
             sleep(2)
         
         # start worker_4 thread product retrievers
@@ -372,7 +372,7 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
             worker.start()
         
         # wait until we have enough work to dispatch workers two
-        while len(self.scraper.retrieved_search_product) < 20:
+        while len(self.scraper.retrieved_search_product) < 3:
             sleep(2)
         
         writer_thread = Thread(target=self.scraper.write_retrieved_product, args=(self.output_dir, (self.workers_4)))
