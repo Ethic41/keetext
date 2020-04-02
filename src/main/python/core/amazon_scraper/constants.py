@@ -42,7 +42,7 @@ next_page_attributes = {"class":"a-last"}
 
 not_available_string = re.compile(r"Derzeit nicht auf Lager\.|Derzeit nicht verfügbar\.|Currently not on stock\.|Currently unavailable\.|Momentan nicht verfügbar\.|unavailable|Currently unavailable.|Currently not on stock.")
 uuid_pattern = re.compile(r"[a-z0-9\-]{36}")
-asin_pattern = re.compile(r"[A-Z0-9]{10}")
+asin_pattern = re.compile(r"\bB[A-Z0-9]{9}")  # B07MLQ48G7
 index_pattern = re.compile(r"\d+")
 item_section_tag = "div"
 item_section_attributes = {"data-asin":asin_pattern, "data-uuid":uuid_pattern, "data-index":index_pattern}
