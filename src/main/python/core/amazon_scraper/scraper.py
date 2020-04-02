@@ -284,6 +284,10 @@ class Scraper:
         departments_section: SoupTag = soup.find(const.departments_tag, const.departments_attributes)
         if departments_section:
             for department_section in departments_section.find_all(const.department_section_tag, const.department_section_attributes):
+                if self.search_has_been_stopped():
+                    self.scrape_status = self.searching_stopped_status
+                    exit(0)
+                
                 if department_section:
                     search_subcategory: SearchSubCategory = SearchSubCategory()
                     search_subcategory.url = department_section.a["href"]
