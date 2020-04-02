@@ -9,8 +9,10 @@ import ui.base_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
 from core.amazon_scraper.structures import ListWidgetItem, Category
 from threading import Thread
+from collections import deque
 import threading
 from time import sleep
+import tempfile
 import os
 
 
@@ -31,6 +33,8 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         self.all_in_one_format = "all"
         self.category_format = "category"
         self.subcategory_format = "subcategory"
+
+        self.temp_dir = tempfile.gettempdir()
 
         self.workers_1 = []
         self.workers_2 = []
@@ -102,12 +106,48 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
 
         self.outputDirectoryLineEdit.textChanged.connect(self.show_output_dir_files)
         self.outputDirectoryListWidget.clicked.connect(self.show_output_dir_files)
+
+        self.searchPushButton.clicked.connect(self.add_to_search_history)
         
         # search button clicked
         self.searchPushButton.clicked.connect(self.start_search)
 
+        self.set_saved_output_dir()
+        self.show_file_history()
+
         status_thread = Thread(target=self.status_tracking)
         status_thread.start()
+
+    def add_to_search_history(self):
+        key_word = self.searchComboBox.currentText() + "\n"
+        history = deque(maxlen=10)
+        if os.path.exists(rf"{self.temp_dir}/keetextsearch.dmd"):
+            with open(rf"{self.temp_dir}/keetextsearch.dmd", "r") as file:
+                prev_search = file.readlines()
+                prev_search.reverse()
+                prev_search.append(key_word)
+            
+            for item in prev_search:
+                if not item in history:
+                    history.append(item)
+            
+            with open(rf"{self.temp_dir}/keetextsearch.dmd", "w") as file:
+                file.writelines(history)
+        else:
+            self.create_search_history(key_word)
+
+    def create_search_history(self, key_word):
+        with open(rf"{self.temp_dir}/keetextsearch.dmd", "a") as file:
+            file.write(f"{key_word}")
+    
+    def show_file_history(self):
+        if os.path.exists(rf"{self.temp_dir}/keetextsearch.dmd"):
+            with open(rf"{self.temp_dir}/keetextsearch.dmd", "r") as file:
+                prev_search = file.readlines()
+            
+            self.searchComboBox.removeItem(0)
+            for search_term in prev_search:
+                self.searchComboBox.addItem(search_term.strip("\n"))
 
     def show_output_dir_files(self):
         try:
@@ -131,6 +171,22 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
         except Exception as e:
             print(e)
     
+    def create_saved_output_dir(self, dir_name):
+        if not os.path.exists(rf"{self.temp_dir}/keetextdir.dmd"):
+            with open(rf"{self.temp_dir}/keetextdir.dmd", "w") as temp:
+                temp.write(dir_name)
+
+    def get_saved_output_dir(self):
+        if os.path.exists(rf"{self.temp_dir}/keetextdir.dmd"):
+            with open(rf"{self.temp_dir}/keetextdir.dmd", "r") as temp:
+                return temp.read()
+        return None
+    
+    def set_saved_output_dir(self):
+        dir_name = self.get_saved_output_dir()
+        if dir_name:
+            self.outputDirectoryLineEdit.setText(dir_name)
+
     def choose_output_dir(self):
         try:
             output_dialog = QtWidgets.QFileDialog(self)
@@ -140,7 +196,9 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
             output_dialog.setOption(QtWidgets.QFileDialog.ShowDirsOnly)
             output_dialog.open()
             if output_dialog.exec():
-                self.outputDirectoryLineEdit.setText(output_dialog.selectedFiles()[0])
+                dir_name = output_dialog.selectedFiles()[0]
+                self.outputDirectoryLineEdit.setText(dir_name)
+                self.create_saved_output_dir(dir_name)
         except Exception as e:
             print(e)
 
@@ -305,84 +363,23 @@ class KeetextGui(Ui_MainWindow, QtWidgets.QMainWindow):
             self.show_output_dir_files()
     
     def search_watch_dog(self):
-        min_rank = self.minimumRankSpinBox.value()
-        max_rank = self.maximumRankSpinBox.value()
-        min_subrank = self.minimumSubrankSpinBox.value()
-        max_subrank = self.maximumSubrankSpinBox.value()
+        self.scraper.min_rank = self.minimumRankSpinBox.value()
+        self.scraper.max_rank = self.maximumRankSpinBox.value()
+        self.scraper.min_subrank = self.minimumSubrankSpinBox.value()
+        self.scraper.max_subrank = self.maximumSubrankSpinBox.value()
+        self.scraper.output_dir = self.output_dir
+        self.scraper.rating = self.selected_rating
 
         # start finder thread
         self.finder_thread = Thread(target=self.scraper.search, args=(self.searchComboBox.currentText(), ))
         self.finder_thread.start()
-
-        # we are waiting until all subcats have been retrieved
-        while not self.scraper.all_search_subcategories_retrieved:
-            sleep(1)
-        
-        if self.scraper.unrated_subcategories:
-            # start workers_1 threads rating_filters
-            workers_1_count = 1
-            self.workers_1 = []
-            for _ in range(workers_1_count):
-                worker = Thread(target=self.scraper.apply_rating_filter_to_search, args=(self.selected_rating, self.finder_thread))
-                self.workers_1.append(worker)
-            
-            for worker in self.workers_1:
-                worker.start()
-        
-        # wait until we have enough work to dispatch workers two
-        while len(self.scraper.rated_subcategories) < 3:
-            sleep(2)
-        
-        # start workers_2 threads not_available_filters
-        workers_2_count = 1
-        self.workers_2 = []
-        for _ in range(workers_2_count):
-            worker = Thread(target=self.scraper.apply_include_not_available_filter_to_search, args=(self.workers_1, ))
-            self.workers_2.append(worker)
-        
-        for worker in self.workers_2:
-            worker.start()
-        
-        # wait until we have enough work to dispatch workers two
-        while len(self.scraper.fully_filtered_subcategories) < 3:
-            sleep(2)
-        
-        # start worker_3 thread product url retrievers
-        workers_3_count = 1
-        self.workers_3 = []
-        for _ in range(workers_3_count):
-            worker = Thread(target=self.scraper.retrieve_product_url, args=(self.workers_2, ))
-            self.workers_3.append(worker)
-        
-        for worker in self.workers_3:
-            worker.start()
-
-        # wait until we have enough work to dispatch workers two
-        while len(self.scraper.unretrieved_products) < 3:
-            sleep(2)
-        
-        # start worker_4 thread product retrievers
-        workers_4_count = 1
-        self.workers_4 = []
-        for _ in range(workers_4_count):
-            worker = Thread(target=self.scraper.retrieve_product, args=((self.workers_3), min_rank, max_rank, min_subrank, max_subrank))
-            self.workers_4.append(worker)
-        
-        for worker in self.workers_4:
-            worker.start()
-        
-        # wait until we have enough work to dispatch workers two
-        while len(self.scraper.retrieved_search_product) < 3:
-            sleep(2)
-        
-        writer_thread = Thread(target=self.scraper.write_retrieved_product, args=(self.output_dir, (self.workers_4)))
-        writer_thread.start()
             
     def status_tracking(self):
         main_thread = threading.main_thread()
         while main_thread.is_alive():
             self.programStatus.setText(self.scraper.scrape_status)
-            sleep(1)
+            self.show_output_dir_files()
+            sleep(2)
         exit(0)
 
     def change_base_url(self):
