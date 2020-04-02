@@ -20,7 +20,7 @@ class Scraper:
     def __init__(self):
         self.base_url = const.base_url
         self.requester = Requester()
-        # self.writer = Writer()
+        self.writer = Writer()
         self.requester.make_request(self.base_url)
         self.categories: CategoryList = []  # take care in adding and removing items
         self.subcategories: SubCategoryList = []  # appropriately to save memory
@@ -207,19 +207,22 @@ class Scraper:
         product_information = {}
         labels = []
         values = []
+        print(self.base_url + url)
         soup = self.make_soup(self.base_url + url)
 
         if soup.find(const.product_tag, const.product_label_attributes):
             for item_label_tag in soup.find_all(const.product_tag, const.product_label_attributes):
                 labels.append(str(item_label_tag.string).strip("\n").strip())
         else:
-            return {}
+            labels.append("ASIN")
         
         if soup.find(const.product_tag, const.product_value_attributes):
             for item_value_tag in soup.find_all(const.product_tag, const.product_value_attributes):
                 values.append(str(item_value_tag.string).strip("\n").strip())
         else:
-            return {}
+            asin_string = soup.find(string=const.asin_pattern)
+            values.append(re.search(const.asin_pattern, asin_string).group(0))
+
         
         number_of_product_info = min(len(labels), len(values))
         for i in range(number_of_product_info):
@@ -240,7 +243,6 @@ class Scraper:
         except Exception:
             pass
     
-        
         product_information["product_url"] = self.base_url + url
 
         return product_information
@@ -286,6 +288,7 @@ class Scraper:
                     search_subcategory: SearchSubCategory = SearchSubCategory()
                     search_subcategory.url = department_section.a["href"]
                     search_subcategory.valid_url = search_subcategory.url
+                    print(search_subcategory.valid_url)
                     self.unrated_subcategories.appendleft(search_subcategory)
             
             self.all_search_subcategories_retrieved = True   # we have retrieved all subcats
@@ -420,14 +423,18 @@ class Scraper:
                 try:
                     product: Product = self.unretrieved_products.pop()
                     product_information = self.extract_product_information(product.product_url)
+                    print("before rank filter")
 
                     if min_rank and max_rank:
                         if not self.is_valid_rank(product_information, min_rank, max_rank):
+                            print("we will continue here")
                             continue
 
                     if min_subrank and max_subrank:
                         if not self.is_valid_subrank(product_information, min_subrank, max_subrank):
+                            print("we will continue, subrank")
                             continue
+
                     
                     product.product_data = product_information
                     self.retrieved_search_product.appendleft(product)
@@ -480,6 +487,7 @@ class Scraper:
                 
                 if self.retrieved_search_product:
                     product = self.retrieved_search_product.pop()
+                    # print(product.product_data)
                     self.writer.write([product])
                     self.show_searched_product_count()
             except Exception:
