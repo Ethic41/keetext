@@ -20,17 +20,19 @@ class Scraper:
     def __init__(self):
         self.base_url = const.base_url
         self.requester = Requester()
-        self.writer = Writer()
+        # self.writer = Writer()
         self.requester.make_request(self.base_url)
         self.categories: CategoryList = []  # take care in adding and removing items
         self.subcategories: SubCategoryList = []  # appropriately to save memory
         self.retrieved_products: ProductList = []  # this will contain retrieved items_data, size not > 10
-        # self.unrated_subcategories: SearchSubCategoryList = deque()  # this will contain categories found during search
-        # self.rated_subcategories: SearchSubCategoryList = deque()
-        # self.fully_filtered_subcategories: SearchSubCategoryList = deque()  # all user define filters have been added
-        # self.unretrieved_products: UnretrievedProductList = deque()
-        # self.retrieved_search_product: UnretrievedProductList = deque()
         
+        self.min_rank = None
+        self.max_rank = None
+        self.min_subrank = None
+        self.max_subrank = None
+        self.rating = None
+        self.output_dir = None
+
         self.retrieved_products_count: int = 0
         self.total_retrieved_product_count: int = 0
         self.retrieved_search_product_count: int = 0
@@ -94,8 +96,8 @@ class Scraper:
                         subcategory.valid_url = star_rating_section_tag.parent["href"]
                     else:
                         subcategory.validity = const.invalid
-            except Exception:
-                continue
+            except Exception as e:
+                self.scrape_status = e
     
     def filter_by_include_not_available(self):
         self.scrape_status = "filtering not available Products..."
@@ -109,7 +111,8 @@ class Scraper:
                         subcategory.valid_url = not_available_section_tag.a["href"]
                     else:
                         subcategory.validity = const.invalid
-            except Exception:
+            except Exception as e:
+                self.scrape_status = e
                 continue
     
     def retrieve_not_available_item(self, output_file_format, output_dir, min_rank=None, max_rank=None, min_subrank=None, max_subrank=None):
@@ -181,7 +184,7 @@ class Scraper:
                 self.write_and_cleanup()
             except Exception as e:
                 self.write_and_cleanup()
-                print(e)
+                self.scrape_status = e
                 continue
         if self.started and not self.stopped:   # this means we completed the task wthout being stopped
             self.scrape_status = self.completed_status
@@ -207,7 +210,6 @@ class Scraper:
         product_information = {}
         labels = []
         values = []
-        print(self.base_url + url)
         soup = self.make_soup(self.base_url + url)
 
         if soup.find(const.product_tag, const.product_label_attributes):
@@ -274,7 +276,10 @@ class Scraper:
             return False
 
     def search(self, search_term: str):
-        self.all_search_subcategories_retrieved = False  # we haven't retrieved all subcategories
+        output_file_format = "all"
+        output_dir = self.output_dir
+        self.writer = Writer()
+        self.writer.create_file(output_file_format, output_dir)   # create the excel file in memory
         self.retrieved_search_product_count = 0
         self.unrated_subcategories: SearchSubCategoryList = deque()  # TODO: remove the declaration from init
         self.scrape_status = self.searching_status
@@ -286,171 +291,167 @@ class Scraper:
             for department_section in departments_section.find_all(const.department_section_tag, const.department_section_attributes):
                 if self.search_has_been_stopped():
                     self.scrape_status = self.searching_stopped_status
-                    exit(0)
+                    self.search_cleanup
                 
                 if department_section:
                     search_subcategory: SearchSubCategory = SearchSubCategory()
                     search_subcategory.url = department_section.a["href"]
                     search_subcategory.valid_url = search_subcategory.url
-                    print(search_subcategory.valid_url)
                     self.unrated_subcategories.appendleft(search_subcategory)
             
-            self.all_search_subcategories_retrieved = True   # we have retrieved all subcats
+            while self.unrated_subcategories:
+                self.apply_rating_filter_to_search()
+                self.apply_include_not_available_filter_to_search()
+                self.retrieve_product_url()
+            
+            self.scrape_status = self.search_completed_status
             
     
-    def apply_rating_filter_to_search(self, rating: int, finder: Thread):
+    def apply_rating_filter_to_search(self):
+        rating = self.rating
         main_thread = threading.main_thread()
         self.rated_subcategories: SearchSubCategoryList = deque()
 
-        while True:
-            if not main_thread.is_alive():
-                exit(0)
+        if not main_thread.is_alive():
+            self.search_cleanup()
 
-            if self.search_has_been_stopped():
-                self.scrape_status = self.searching_stopped_status
-                exit(0)
+        if self.search_has_been_stopped():
+            self.scrape_status = self.searching_stopped_status
+            self.search_cleanup()
 
-            if not finder.is_alive() and not self.unrated_subcategories:
-                exit(0)
+        try:
+            if self.unrated_subcategories:
+                self.scrape_status = f"filtering {rating}-Star Rated Searched Products..."
+                search_subcategory = self.unrated_subcategories.pop()
+            
+                if search_subcategory.validity == const.valid:
+                    soup = self.make_soup(self.base_url + search_subcategory.valid_url)
+                    star_rating_attributes = const.ratings[rating]
 
-            try:
-                if self.unrated_subcategories:
-                    self.scrape_status = f"filtering {rating}-Star Rated Searched Products..."
-                    search_subcategory = self.unrated_subcategories.pop()
-                
-                    if search_subcategory.validity == const.valid:
-                        soup = self.make_soup(self.base_url + search_subcategory.valid_url)
-                        star_rating_attributes = const.ratings[rating]
-
-                        star_rating_section_tag: SoupTag = soup.find(const.star_tag, attrs=star_rating_attributes)
-                        if (star_rating_section_tag) and (star_rating_section_tag.parent.parent.name == "a"):
-                            search_subcategory.valid_url = star_rating_section_tag.parent.parent["href"]
-                            self.rated_subcategories.appendleft(search_subcategory)
-                        else:
-                            del search_subcategory
-            except Exception:
-                continue 
+                    star_rating_section_tag: SoupTag = soup.find(const.star_tag, attrs=star_rating_attributes)
+                    if (star_rating_section_tag) and (star_rating_section_tag.parent.parent.name == "a"):
+                        search_subcategory.valid_url = star_rating_section_tag.parent.parent["href"]
+                        self.rated_subcategories.appendleft(search_subcategory)
+                    else:
+                        del search_subcategory
+        except Exception as e:
+            self.scrape_status = e
     
-    def apply_include_not_available_filter_to_search(self, workers_1):
+    def apply_include_not_available_filter_to_search(self):
         self.fully_filtered_subcategories: SearchSubCategoryList = deque()  # all user define filters have been added
 
         main_thread = threading.main_thread()
-        while True:
-            if not main_thread.is_alive():
-                exit(0)
-            
-            if self.search_has_been_stopped():
-                self.scrape_status = self.searching_stopped_status
-                exit(0)
-            
-            if not self.rated_subcategories and self.workers_are_dead(workers_1):
-                exit(0)
-            
-            try:
-                if self.rated_subcategories:
-                    self.scrape_status = "filtering not available Searched Products..."
-                    search_subcategory = self.rated_subcategories.pop()
+        
+        if not main_thread.is_alive():
+            self.search_cleanup()
+        
+        if self.search_has_been_stopped():
+            self.scrape_status = self.searching_stopped_status
+            self.search_cleanup()
+        
+        try:
+            if self.rated_subcategories:
+                self.scrape_status = "filtering not available Searched Products..."
+                search_subcategory = self.rated_subcategories.pop()
 
-                    if search_subcategory.validity == const.valid:
-                        soup = self.make_soup(self.base_url + search_subcategory.valid_url)
+                if search_subcategory.validity == const.valid:
+                    soup = self.make_soup(self.base_url + search_subcategory.valid_url)
 
-                        not_available_section_tag: SoupTag = soup.find(const.not_avail_section_tag, attrs=const.not_avail_section_attributes)
-                        if (not_available_section_tag) and (not_available_section_tag.a):
-                            search_subcategory.valid_url = not_available_section_tag.a["href"]
-                            self.fully_filtered_subcategories.appendleft(search_subcategory)
-                        else:
-                            del search_subcategory
-            except Exception:
-                continue
+                    not_available_section_tag: SoupTag = soup.find(const.not_avail_section_tag, attrs=const.not_avail_section_attributes)
+                    if (not_available_section_tag) and (not_available_section_tag.a):
+                        search_subcategory.valid_url = not_available_section_tag.a["href"]
+                        self.fully_filtered_subcategories.appendleft(search_subcategory)
+                    else:
+                        del search_subcategory
+        except Exception as e:
+            self.scrape_status = e
     
-    def retrieve_product_url(self, workers_2):
+    def retrieve_product_url(self):
         main_thread = threading.main_thread()
         self.unretrieved_products: UnretrievedProductList = deque()
 
-        while True:
-            if not main_thread.is_alive():
-                exit(0)
-            
-            if self.search_has_been_stopped():
-                self.scrape_status = self.searching_stopped_status
-                exit(0)
-            
-            if not self.fully_filtered_subcategories and self.workers_are_dead(workers_2):
-                exit(0)
+        if not main_thread.is_alive():
+            self.search_cleanup()
+        
+        if self.search_has_been_stopped():
+            self.scrape_status = self.searching_stopped_status
+            self.search_cleanup()
 
-            try:
-                if self.fully_filtered_subcategories:
-                    search_subcategory = self.fully_filtered_subcategories.pop()
-                    if search_subcategory.validity == const.valid:
-                        while(search_subcategory.valid_url):
-                            self.scrape_status = "Retrieving products page address..."
-                            if self.search_has_been_stopped():
-                                self.scrape_status = self.searching_stopped_status
-                                exit(0)
+        try:
+            if self.fully_filtered_subcategories:
+                search_subcategory = self.fully_filtered_subcategories.pop()
+                if search_subcategory.validity == const.valid:
+                    while(search_subcategory.valid_url):
+                        self.scrape_status = "Retrieving products page address..."
+                        if self.search_has_been_stopped():
+                            self.scrape_status = self.searching_stopped_status
+                            self.search_cleanup()
 
-                            soup = self.make_soup(self.base_url + search_subcategory.valid_url)
-                            if soup.find(string=const.not_available_string):   # the page contain not available product
-                                # for each product in the page, we are trying to find matching product
-                                for product_section in soup.find_all(const.item_section_tag, const.item_section_attributes):
-                                    self.scrape_status = "Retrieving products page address..."
-                                    product_section: SoupTag = product_section
-                                    # if this is the matching product
-                                    if product_section.find(string=const.not_available_string):
-                                        new_product: Product = Product()
-                                        new_product.product_url = product_section.a["href"]
-                                        self.unretrieved_products.appendleft(new_product)
-                                
-                                search_subcategory.valid_url = self.get_next_page_link(soup)
-                                continue       
-                            else:   # the does not contain not available item, we retrieve next page
-                                search_subcategory.valid_url = self.get_next_page_link(soup)
-            except Exception:
-                continue
+                        soup = self.make_soup(self.base_url + search_subcategory.valid_url)
+                        if soup.find(string=const.not_available_string):   # the page contain not available product
+                            # for each product in the page, we are trying to find matching product
+                            for product_section in soup.find_all(const.item_section_tag, const.item_section_attributes):
+                                self.scrape_status = "Retrieving products page address..."
+                                product_section: SoupTag = product_section
+                                # if this is the matching product
+                                if product_section.find(string=const.not_available_string):
+                                    new_product: Product = Product()
+                                    new_product.product_url = product_section.a["href"]
+                                    self.unretrieved_products.appendleft(new_product)
+                                    self.retrieve_product()
+                            
+                            search_subcategory.valid_url = self.get_next_page_link(soup)
+                            continue       
+                        else:   # the does not contain not available item, we retrieve next page
+                            search_subcategory.valid_url = self.get_next_page_link(soup)
+        except Exception as e:
+            self.scrape_status = e
     
-    def retrieve_product(self, workers_3, min_rank=None, max_rank=None, min_subrank=None, max_subrank=None):
+    def retrieve_product(self):
+        min_rank = self.min_rank
+        max_rank = self.max_rank
+        min_subrank = self.min_subrank
+        max_subrank= self.max_subrank
+
         self.retrieved_search_product: UnretrievedProductList = deque()
         main_thread = threading.main_thread()
 
-        while True:
-            if not main_thread.is_alive():
-                exit(0)
-            
-            if self.search_has_been_stopped():
-                self.scrape_status = self.searching_stopped_status
-                exit(0)
-            
-            if not self.unretrieved_products and self.workers_are_dead(workers_3):
-                exit(0)
-            
-            if self.unretrieved_products:
-                self.scrape_status = "Retrieving product..."
-                try:
-                    product: Product = self.unretrieved_products.pop()
-                    product_information = self.extract_product_information(product.product_url)
-                    print("before rank filter")
+        if not main_thread.is_alive():
+            self.search_cleanup()
+        
+        if self.search_has_been_stopped():
+            self.scrape_status = self.searching_stopped_status
+            self.search_cleanup()
+        
+        if self.unretrieved_products:
+            self.scrape_status = "Retrieving product..."
+            try:
+                self.show_searched_product_count()
+                product: Product = self.unretrieved_products.pop()
+                product_information = self.extract_product_information(product.product_url)
 
-                    if min_rank and max_rank:
-                        if not self.is_valid_rank(product_information, min_rank, max_rank):
-                            print("we will continue here")
-                            continue
+                if min_rank and max_rank:
+                    if not self.is_valid_rank(product_information, min_rank, max_rank):
+                        return
 
-                    if min_subrank and max_subrank:
-                        if not self.is_valid_subrank(product_information, min_subrank, max_subrank):
-                            print("we will continue, subrank")
-                            continue
+                if min_subrank and max_subrank:
+                    if not self.is_valid_subrank(product_information, min_subrank, max_subrank):
+                        return
 
-                    
-                    product.product_data = product_information
-                    self.retrieved_search_product.appendleft(product)
-                    self.retrieved_search_product_count += 1
-                    self.show_searched_product_count()
+                product.product_data = product_information
+                self.retrieved_search_product.appendleft(product)
+                self.retrieved_search_product_count += 1
+                self.show_searched_product_count()
+                self.write_retrieved_product()
+                self.show_searched_product_count()
 
-                except Exception as e:
-                    print(e)
-            else:
-                pass
+            except Exception as e:
+                self.scrape_status = e
+        else:
+            pass
     
     def search_cleanup(self):
+        self.writer.close_workbook()
         self.retrieved_search_product_count = 0
         self.retrieved_search_product: UnretrievedProductList = deque()
         self.unretrieved_products: UnretrievedProductList = deque()
@@ -469,36 +470,22 @@ class Scraper:
         
         return True
     
-    def write_retrieved_product(self, output_dir, workers_4):
-        output_file_format = "all"
-        self.writer = Writer()
-        self.writer.create_file(output_file_format, output_dir)   # create the excel file in memory
-
+    def write_retrieved_product(self):
+        self.scrape_status = f"Retrieved {self.retrieved_search_product_count} matching Products"
         main_thread = threading.main_thread()
-
-        while main_thread.is_alive():
-            try:
-                if self.search_has_been_stopped():
-                    self.writer.close_workbook()
-                    self.search_cleanup()
-                
-                if not self.retrieved_search_product and self.workers_are_dead(workers_4):
-                    self.scrape_status = f"Search Completed successfully, {self.retrieved_search_product_count} retrieved"
-                    self.writer.close_workbook()
-                    self.search_cleanup()
-
-                self.show_searched_product_count()
-                
-                if self.retrieved_search_product:
-                    product = self.retrieved_search_product.pop()
-                    # print(product.product_data)
-                    self.writer.write([product])
-                    self.show_searched_product_count()
-            except Exception:
-                continue
+        if not main_thread.is_alive():
+            self.search_cleanup()
         
-        self.writer.close_workbook()
-        self.search_cleanup()
+        try:
+            if self.search_has_been_stopped():
+                self.search_cleanup()
+            
+            if self.retrieved_search_product:
+                product = self.retrieved_search_product.pop()
+                self.writer.write([product])
+                self.show_searched_product_count()
+        except Exception:
+            pass
     
 
     def show_searched_product_count(self):
